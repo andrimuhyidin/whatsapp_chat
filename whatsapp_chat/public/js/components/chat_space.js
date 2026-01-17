@@ -61,6 +61,7 @@ export default class ChatSpace {
                             <a class="dropdown-item" href="#" onclick="cur_dialog.chat_space.send_template()">Send Template</a>
                             <a class="dropdown-item" href="#" onclick="cur_dialog.chat_space.show_message_builder('buttons')">Send Buttons</a>
                             <a class="dropdown-item" href="#" onclick="cur_dialog.chat_space.show_message_builder('list')">Send List</a>
+                            <a class="dropdown-item" href="#" onclick="cur_dialog.chat_space.schedule_message()">Schedule Message</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="#" onclick="cur_dialog.chat_space.create_lead()">Create Lead</a>
                             <a class="dropdown-item" href="#" onclick="cur_dialog.chat_space.create_issue()">Create Issue (Ticket)</a>
@@ -187,29 +188,7 @@ export default class ChatSpace {
       const me = this;
       frappe.require('/assets/whatsapp_chat/js/components/message_builder.js', () => {
           const builder = new window.MessageBuilder((payload) => {
-              // Send the built message
-              frappe.call({
-                  method: 'whatsapp_chat.api.message.send', // This needs update in backend to handle dict content
-                  args: {
-                      user: me.profile.user,
-                      room: me.profile.room,
-                      user_no: me.profile.user_email,
-                      content: payload.message,
-                      attachment: null, // Hacky, assume text first
-                      // We need to pass extra payload but api/message.py 'send' is simple
-                      // Alternative: Create new specific api for rich messages or pass as JSON string in content
-                      // Let's assume we update api/message.py to handle extra params or pass as stringified content with prefix
-                  },
-                  callback: function(r) {
-                      if (!r.exc) {
-                          // For complex messages, we might need a dedicated API that accepts 'interactive_data'
-                          // Since 'send' is used for everything, let's use a dedicated API for rich messages to be clean
-                          // Re-doing the call to a new endpoint we will create
-                      }
-                  }
-              });
-              
-              // ACTUALLY, let's call a new endpoint: send_interactive
+              // Call send_interactive endpoint
                frappe.call({
                   method: 'whatsapp_chat.api.message.send_interactive',
                   args: {
@@ -220,13 +199,54 @@ export default class ChatSpace {
                   callback: function(r) {
                       if (!r.exc) {
                           frappe.show_alert({message: __('Message Sent'), indicator: 'green'});
-                          me.fetch_and_setup_messages(); // Refresh to see it
+                          me.fetch_and_setup_messages();
                       }
                   }
               });
           });
           builder.show_builder_dialog(type);
       });
+  }
+
+  schedule_message() {
+      const me = this;
+      const d = new frappe.ui.Dialog({
+          title: __('Schedule Message'),
+          fields: [
+              {
+                  label: 'Message',
+                  fieldname: 'message',
+                  fieldtype: 'Small Text',
+                  reqd: 1
+              },
+              {
+                  label: 'Scheduled Time',
+                  fieldname: 'scheduled_time',
+                  fieldtype: 'Datetime',
+                  reqd: 1,
+                  default: frappe.datetime.add_hours(frappe.datetime.now_datetime(), 1)
+              }
+          ],
+          primary_action_label: __('Schedule'),
+          primary_action(values) {
+              frappe.call({
+                  method: 'frappe_whatsapp.utils.scheduler.schedule_message',
+                  args: {
+                      to: me.profile.user_email,
+                      message: values.message,
+                      scheduled_time: values.scheduled_time,
+                      whatsapp_account: null // Will use default account
+                  },
+                  callback: function(r) {
+                      if (!r.exc) {
+                          frappe.show_alert({message: __('Message scheduled for ') + values.scheduled_time, indicator: 'green'});
+                          d.hide();
+                      }
+                  }
+              });
+          }
+      });
+      d.show();
   }
 
   async fetch_and_setup_messages() {
