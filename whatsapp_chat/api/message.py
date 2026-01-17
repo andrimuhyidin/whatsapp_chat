@@ -226,14 +226,3 @@ def send_interactive(room, user_no, message_payload):
     })
     doc.insert(ignore_permissions=True)
     return "ok"
-            message_data,
-            user=chat_doc.email
-        )
-        # Notify open chat room
-        frappe.publish_realtime(
-            chat_doc.name,
-            message_data,
-            user=chat_doc.email
-        )
-
-    return "ok"
