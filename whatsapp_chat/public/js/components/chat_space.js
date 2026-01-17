@@ -273,9 +273,121 @@ export default class ChatSpace {
         me.handle_send_message();
       }
     });
+
+    // Quick Reply Listener
+    $('.type-message').on('keyup', (e) => {
+        const val = e.target.value;
+        if (val === '/') {
+            me.show_quick_reply_dialog(e.target);
+        }
+    });
+
+    // Internal Note Toggle
+    const $actions = this.$chat_actions;
+    const internal_note_btn = $(`<span class="internal-note-toggle" title="${__('Internal Note')}">${frappe.utils.icon('locked', 'md')}</span>`);
+    internal_note_btn.insertBefore($actions.find('.open-attach-items'));
+    
+    internal_note_btn.on('click', function() {
+        me.is_internal_note = !me.is_internal_note;
+        $(this).toggleClass('active');
+        const input = $actions.find('.type-message');
+        if (me.is_internal_note) {
+            input.addClass('internal-note-mode');
+            input.attr('placeholder', __('Type internal note...'));
+            $(this).css('color', 'var(--yellow-500)');
+        } else {
+            input.removeClass('internal-note-mode');
+            input.attr('placeholder', __('Type message'));
+            $(this).css('color', 'inherit');
+        }
+    });
   }
 
-  setup_socketio() {
+  show_quick_reply_dialog(input_element) {
+    const me = this;
+    const d = new frappe.ui.Dialog({
+        title: __('Select Quick Reply'),
+        fields: [
+            {
+                label: 'Search Reply',
+                fieldname: 'reply',
+                fieldtype: 'Link',
+                options: 'WhatsApp Quick Reply',
+                reqd: 1,
+                get_query: () => { return { filters: {} }; },
+                onchange: () => {
+                    if (d.get_value('reply')) {
+                        frappe.db.get_value('WhatsApp Quick Reply', d.get_value('reply'), 'message')
+                            .then(r => {
+                                if (r && r.message) {
+                                    $(input_element).val(r.message);
+                                    d.hide();
+                                    $(input_element).focus();
+                                }
+                            });
+                    }
+                }
+            }
+        ],
+        primary_action_label: __('Insert'),
+        primary_action: (values) => { d.hide(); }
+    });
+    d.show();
+  }
+
+  handle_send_message(attachment) {
+    const $type_message = $('.type-message');
+    let content = null;
+
+    if (attachment) {
+      content = attachment;
+    } else {
+      content = $type_message.val();
+    }
+
+    if (content.length === 0) {
+      return;
+    }
+    this.typing = false;
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+    }
+
+    if (
+      this.profile.is_admin === true &&
+      frappe.Chat.settings.user.enable_message_tone === 1
+    ) {
+      frappe.utils.play_sound('chat-message-send');
+    }
+
+    // Pass is_internal_note flag if set
+    const is_internal = this.is_internal_note || false;
+
+    // Optimistic UI update - styling for internal note
+    const msg_element = this.make_message(content, get_time(), 'recipient', this.profile.user);
+    if (is_internal) {
+        msg_element.find('.message-bubble').css({'background': 'var(--yellow-100)', 'color': 'var(--text-color)'});
+        msg_element.find('.message-bubble').prepend(`<strong>[Internal]</strong> `);
+    }
+    this.$chat_space_container.append(msg_element);
+    
+    $type_message.val('');
+    // Reset internal note mode after send? optional. Let's keep it until toggled off or reset it.
+    // Usually convenient to reset.
+    if (is_internal) {
+        $('.internal-note-toggle').click(); // toggle back
+    }
+
+    scroll_to_bottom(this.$chat_space_container);
+    send_message(
+      content,
+      this.profile.user,
+      this.profile.room,
+      this.profile.user_email,
+      attachment,
+      is_internal
+    );
+  }
     const me = this;
     // Track received message IDs to prevent duplicates
     this.received_message_ids = new Set();
@@ -427,17 +539,32 @@ export default class ChatSpace {
       frappe.utils.play_sound('chat-message-send');
     }
 
-    this.$chat_space_container.append(
-      this.make_message(content, get_time(), 'recipient', this.profile.user)
-    );
+    // Pass is_internal_note flag if set
+    const is_internal = this.is_internal_note || false;
+
+    // Optimistic UI update - styling for internal note
+    const msg_element = this.make_message(content, get_time(), 'recipient', this.profile.user);
+    if (is_internal) {
+        msg_element.find('.message-bubble').css({'background': 'var(--yellow-100)', 'color': 'var(--text-color)'});
+        msg_element.find('.message-bubble').prepend(`<strong>[Internal]</strong> `);
+    }
+    this.$chat_space_container.append(msg_element);
+    
     $type_message.val('');
+    // Reset internal note mode after send? optional. Let's keep it until toggled off or reset it.
+    // Usually convenient to reset.
+    if (is_internal) {
+        $('.internal-note-toggle').click(); // toggle back
+    }
+
     scroll_to_bottom(this.$chat_space_container);
     send_message(
       content,
       this.profile.user,
       this.profile.room,
       this.profile.user_email,
-      attachment
+      attachment,
+      is_internal
     );
   }
 
@@ -466,6 +593,38 @@ export default class ChatSpace {
       this.make_message(res.content, time, chat_type, res.user)
     );
     scroll_to_bottom(this.$chat_space_container);
+  }
+
+  show_quick_reply_dialog(input_element) {
+    const me = this;
+    const d = new frappe.ui.Dialog({
+        title: __('Select Quick Reply'),
+        fields: [
+            {
+                label: 'Search Reply',
+                fieldname: 'reply',
+                fieldtype: 'Link',
+                options: 'WhatsApp Quick Reply',
+                reqd: 1,
+                get_query: () => { return { filters: {} }; },
+                onchange: () => {
+                    if (d.get_value('reply')) {
+                        frappe.db.get_value('WhatsApp Quick Reply', d.get_value('reply'), 'message')
+                            .then(r => {
+                                if (r && r.message) {
+                                    $(input_element).val(r.message);
+                                    d.hide();
+                                    $(input_element).focus();
+                                }
+                            });
+                    }
+                }
+            }
+        ],
+        primary_action_label: __('Insert'),
+        primary_action: (values) => { d.hide(); }
+    });
+    d.show();
   }
 
   render() {

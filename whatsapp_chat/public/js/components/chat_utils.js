@@ -67,7 +67,7 @@ async function get_messages(room, user_no) {
   return await res.message;
 }
 
-async function send_message(content, user, room, user_no, attachment) {
+async function send_message(content, user, room, user_no, attachment, is_internal_note=false) {
   try {
     await frappe.call({
       method: 'whatsapp_chat.api.message.send',
@@ -76,7 +76,8 @@ async function send_message(content, user, room, user_no, attachment) {
         user: user,
         room: room,
         user_no: user_no,
-        attachment: attachment
+        attachment: attachment,
+        is_internal_note: is_internal_note
       },
     });
   } catch (error) {
