@@ -1,3 +1,5 @@
+from . import __version__ as app_version
+
 app_name = "whatsapp_chat"
 app_title = "Whatsapp Chat"
 app_publisher = "shridhar patil"
