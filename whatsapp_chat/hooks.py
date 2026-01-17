@@ -6,6 +6,16 @@ app_email = "shridharpatil2792@gmail.com"
 app_license = "unlicense"
 # required_apps = []
 
+# Desktop Icon
+add_to_apps_screen = [
+    {
+        "name": "whatsapp_chat",
+        "title": "WhatsApp Chat",
+        "icon": "/assets/whatsapp_chat/images/whatsapp-logo.png",
+        "route": "/app/whatsapp-contact"
+    }
+]
+
 # Includes in <head>
 # ------------------
 from frappe import __version__ as frappe_version
