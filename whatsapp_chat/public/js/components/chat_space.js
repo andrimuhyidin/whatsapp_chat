@@ -58,6 +58,8 @@ export default class ChatSpace {
                             Actions
                         </button>
                         <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="#" onclick="cur_dialog.chat_space.send_template()">Send Template</a>
+                            <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="#" onclick="cur_dialog.chat_space.create_lead()">Create Lead</a>
                             <a class="dropdown-item" href="#" onclick="cur_dialog.chat_space.create_issue()">Create Issue (Ticket)</a>
                         </div>
@@ -105,6 +107,78 @@ export default class ChatSpace {
               }
           });
       }, 'Create Support Ticket', 'Create');
+  }
+
+  send_template() {
+      const me = this;
+      // Fetch available templates
+      frappe.call({
+          method: 'frappe.client.get_list',
+          args: {
+              doctype: 'WhatsApp Templates',
+              filters: { status: 'APPROVED' },
+              fields: ['name', 'template', 'header_type', 'footer'],
+              limit_page_length: 50
+          },
+          callback: function(r) {
+              if (!r.message || r.message.length === 0) {
+                  frappe.msgprint(__('No approved templates available'));
+                  return;
+              }
+
+              const templates = r.message;
+              const template_options = templates.map(t => t.name);
+
+              const d = new frappe.ui.Dialog({
+                  title: __('Send Template Message'),
+                  fields: [
+                      {
+                          label: 'Template',
+                          fieldname: 'template_name',
+                          fieldtype: 'Select',
+                          options: template_options.join('\n'),
+                          reqd: 1,
+                          onchange: function() {
+                              const selected = templates.find(t => t.name === d.get_value('template_name'));
+                              if (selected) {
+                                  d.set_value('preview', selected.template || '');
+                              }
+                          }
+                      },
+                      {
+                          label: 'Preview',
+                          fieldname: 'preview',
+                          fieldtype: 'Small Text',
+                          read_only: 1
+                      },
+                      {
+                          label: 'Variables (comma separated)',
+                          fieldname: 'variables',
+                          fieldtype: 'Data',
+                          description: 'Replace {{1}}, {{2}}, etc.'
+                      }
+                  ],
+                  primary_action_label: __('Send'),
+                  primary_action(values) {
+                      frappe.call({
+                          method: 'frappe_whatsapp.utils.send_template_message',
+                          args: {
+                              to: me.profile.user_email,
+                              template_name: values.template_name,
+                              params: values.variables ? values.variables.split(',').map(v => v.trim()) : []
+                          },
+                          callback: function(res) {
+                              if (!res.exc) {
+                                  frappe.show_alert({message: __('Template sent successfully'), indicator: 'green'});
+                                  d.hide();
+                              }
+                          }
+                      });
+                  }
+              });
+              d.show();
+          }
+      });
   }
 
   async fetch_and_setup_messages() {

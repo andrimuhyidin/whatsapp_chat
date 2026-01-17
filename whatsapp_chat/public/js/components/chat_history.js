@@ -1,4 +1,4 @@
-"""Chat history timeline component for WhatsApp Contact form."""
+// Chat history timeline component for WhatsApp Contact form.
 frappe.provide("whatsapp_chat.components");
 
 whatsapp_chat.components.ChatHistory = class ChatHistory {
