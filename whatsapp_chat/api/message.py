@@ -202,3 +202,38 @@ def last_message(doc, method):
         )
 
     return "ok"
+
+@frappe.whitelist()
+def send_interactive(room, user_no, message_payload):
+    """
+    Send interactive messages (buttons/list).
+    """
+    import json
+    if isinstance(message_payload, str):
+        message_payload = json.loads(message_payload)
+        
+    content_type = message_payload.get("content_type", "interactive")
+    message_text = message_payload.get("message")
+    buttons = message_payload.get("buttons")
+    
+    doc = frappe.get_doc({
+        "doctype": "WhatsApp Message",
+        "type": "Outgoing",
+        "to": user_no,
+        "message": message_text,
+        "content_type": content_type,
+        "buttons": json.dumps(buttons) if buttons else None
+    })
+    doc.insert(ignore_permissions=True)
+    return "ok"
+            message_data,
+            user=chat_doc.email
+        )
+        # Notify open chat room
+        frappe.publish_realtime(
+            chat_doc.name,
+            message_data,
+            user=chat_doc.email
+        )
+
+    return "ok"
