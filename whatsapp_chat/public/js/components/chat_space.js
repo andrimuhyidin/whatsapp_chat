@@ -388,6 +388,8 @@ export default class ChatSpace {
       is_internal
     );
   }
+
+  setup_socketio() {
     const me = this;
     // Track received message IDs to prevent duplicates
     this.received_message_ids = new Set();
