@@ -9,7 +9,11 @@
   "mobile_no",
   "is_read",
   "last_message",
-  "email"
+  "email",
+  "column_break_agent",
+  "assigned_agent",
+  "priority",
+  "chat_status"
  ],
  "fields": [
   {
@@ -40,6 +44,31 @@
    "fieldtype": "Link",
    "label": "Email",
    "options": "User"
+  },
+  {
+   "fieldname": "column_break_agent",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "assigned_agent",
+   "fieldtype": "Link",
+   "label": "Assigned Agent",
+   "options": "User",
+   "in_list_view": 1
+  },
+  {
+   "default": "Medium",
+   "fieldname": "priority",
+   "fieldtype": "Select",
+   "label": "Priority",
+   "options": "Low\nMedium\nHigh\nUrgent"
+  },
+  {
+   "default": "Open",
+   "fieldname": "chat_status",
+   "fieldtype": "Select",
+   "label": "Chat Status",
+   "options": "Open\nIn Progress\nWaiting\nResolved\nClosed"
   }
  ],
  "index_web_pages_for_search": 1,
