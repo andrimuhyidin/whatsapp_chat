@@ -56,7 +56,19 @@ app_include_js = ['whatsapp_chat.bundle.js'] if is_frappe_above_v13 else [
 
 doc_events = {
     "WhatsApp Message": {
-        "after_insert":"whatsapp_chat.api.message.last_message"
+        "after_insert": "whatsapp_chat.api.message.last_message"
+    },
+    "Customer": {
+        "on_update": "whatsapp_chat.utils.sync_contacts.sync_entity_to_whatsapp_contact",
+        "after_insert": "whatsapp_chat.utils.sync_contacts.sync_entity_to_whatsapp_contact"
+    },
+    "Supplier": {
+        "on_update": "whatsapp_chat.utils.sync_contacts.sync_entity_to_whatsapp_contact",
+        "after_insert": "whatsapp_chat.utils.sync_contacts.sync_entity_to_whatsapp_contact"
+    },
+    "User": {
+        "on_update": "whatsapp_chat.utils.sync_contacts.sync_entity_to_whatsapp_contact",
+        "after_insert": "whatsapp_chat.utils.sync_contacts.sync_entity_to_whatsapp_contact"
     }
 }
 
