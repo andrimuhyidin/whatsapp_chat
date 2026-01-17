@@ -65,6 +65,8 @@ app_include_js = ['whatsapp_chat.bundle.js'] if is_frappe_above_v13 else [
 
 
 
+after_migrate = "whatsapp_chat.setup.after_migrate"
+
 doc_events = {
     "WhatsApp Message": {
         "after_insert": "whatsapp_chat.api.message.last_message"
