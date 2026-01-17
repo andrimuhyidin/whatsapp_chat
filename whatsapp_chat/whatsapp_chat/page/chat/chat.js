@@ -53,19 +53,25 @@ frappe.pages['chat'].on_page_load = function(wrapper) {
 
                 if (frappe.Chat && frappe.Chat.ChatList) {
                     // Initialize ChatList in our container
-                    // The ChatList component expects a $wrapper
                     const chat_list = new frappe.Chat.ChatList({
                         $wrapper: $container,
                         user: settings.user,
                         user_email: settings.user_email,
-                        is_admin: settings.is_admin
+                        is_admin: settings.is_admin,
+                        on_load: (list_instance) => {
+                             // Check for contact param
+                             const params = frappe.utils.get_query_params();
+                             if (params.contact) {
+                                 // Try to open chat
+                                 const found = list_instance.open_chat(params.contact);
+                                 if (!found) {
+                                     frappe.msgprint(`Contact ${params.contact} not found or no active chat.`);
+                                 }
+                             }
+                        }
                     });
                     chat_list.render();
                     
-                    // If we have a route param for a specific chat, open it
-                    if (frappe.get_route()[2]) {
-                        // TODO: Implement opening specific chat by ID
-                    }
                 } else {
                     frappe.msgprint("Chat components not loaded properly.");
                 }

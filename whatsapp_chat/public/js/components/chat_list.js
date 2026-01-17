@@ -5,6 +5,7 @@ import { get_rooms, mark_message_read, set_notification_count } from './chat_uti
 
 export default class ChatList {
   constructor(opts) {
+    this.opts = opts;
     this.$wrapper = opts.$wrapper;
     this.user = opts.user;
     this.user_email = opts.user_email;
@@ -63,6 +64,9 @@ export default class ChatList {
       this.rooms = res;
       this.setup_rooms();
       this.render_messages();
+      if (this.opts && this.opts.on_load) {
+          this.opts.on_load(this);
+      }
     } catch (error) {
       frappe.msgprint({
         title: __('Error'),
@@ -70,6 +74,19 @@ export default class ChatList {
       });
     }
   }
+
+  // ... (setup_rooms is unchanged)
+
+  open_chat(contact_name) {
+      // Find room by contact name or room name
+      const room = this.chat_rooms.find(r => r[1].profile.room_name === contact_name || r[1].profile.room === contact_name);
+      if (room) {
+          room[1].$chat_room.click();
+          return true;
+      }
+      return false;
+  }
+
 
   setup_rooms() {
     this.$chat_rooms_container = $(document.createElement('div'));

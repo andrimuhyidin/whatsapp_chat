@@ -141,7 +141,7 @@ def notify_agent(agent: str, contact_name: str, is_transfer: bool = False):
                 subject=f"[WhatsApp] {title}",
                 message=f"""
                 <p>{message}</p>
-                <p><a href="/app/whatsapp-contact/{contact_name}">Open Chat</a></p>
+                <p><a href="/app/chat?contact={contact_name}">Open Chat</a></p>
                 """,
                 now=True
             )
