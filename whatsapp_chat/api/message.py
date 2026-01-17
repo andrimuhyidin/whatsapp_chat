@@ -11,26 +11,40 @@ def get_all(room: str, user_no: str):
         room (str): Room's name.
 
     """
-    return frappe.db.sql("""
-        SELECT creation,
-        case
-            when `to` <> '' then `to`
-            else
-            'Administrator'
-        end as sender_user_no,
-        case
-            when COALESCE(content_type, 'text') = 'text' then COALESCE(message, '')
-            else COALESCE(attach, message, '')
-        end as content,
-        case
-            when COALESCE(content_type, 'text') <> 'text' then message
-            else NULL
-        end as caption,
-        COALESCE(content_type, 'text') as content_type
-        from `tabWhatsApp Message` where (`to` = %(user_no)s or `from` = %(user_no)s)
-        AND COALESCE(message_type, '') <> 'Template'
-        order by creation asc
-    """, {"user_no": user_no}, as_dict=True)
+    # Refactored to QueryBuilder
+    wm = frappe.qb.DocType("WhatsApp Message")
+    
+    sender_user_no = (
+        frappe.qb.terms.Case()
+        .when(wm.to != "", wm.to)
+        .else_("Administrator")
+    ).as_("sender_user_no")
+
+    content_type_coalesced = frappe.qb.functions.Coalesce(wm.content_type, "text")
+    
+    content = (
+        frappe.qb.terms.Case()
+        .when(content_type_coalesced == "text", frappe.qb.functions.Coalesce(wm.message, ""))
+        .else_(frappe.qb.functions.Coalesce(wm.attach, wm.message, ""))
+    ).as_("content")
+
+    caption = (
+        frappe.qb.terms.Case()
+        .when(content_type_coalesced != "text", wm.message)
+        .else_(None)
+    ).as_("caption")
+
+    content_type = content_type_coalesced.as_("content_type")
+
+    return (
+        frappe.qb.from_(wm)
+        .select(wm.creation, sender_user_no, content, caption, content_type)
+        .where(
+            (wm.to == user_no) | (wm["from"] == user_no)
+        )
+        .where(frappe.qb.functions.Coalesce(wm.message_type, "") != "Template")
+        .orderby(wm.creation, order=frappe.query_builder.Order.asc)
+    ).run(as_dict=True)
 
 
 @frappe.whitelist()
