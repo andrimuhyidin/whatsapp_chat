@@ -5,12 +5,23 @@ app_description = "Chat app for whatsapp"
 app_email = "shridharpatil2792@gmail.com"
 app_license = "unlicense"
 
+# Module Setup
+# ------------
+setup = {
+    "module_icon": "users",
+    "module_name": "Whatsapp Chat",
+    "type": "module",
+    "color": "#075E54",
+    "category": "Integrations"
+}
+
 add_to_apps_screen = [
     {
         "name": "whatsapp_chat",
-        "title": "WhatsApp Chat",
+        "title": "WhatsApp Agent",
         "icon": "/assets/whatsapp_chat/images/whatsapp-logo.png",
-        "route": "/app/whatsapp-contact"
+        "route": "/app/whatsapp-contact",
+        "description": "Manage WhatsApp conversations and contacts"
     }
 ]
 

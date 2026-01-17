@@ -1,0 +1,138 @@
+{
+ "charts": [],
+ "number_cards": [
+  {
+   "number_card_name": "Total Contacts"
+  }
+ ],
+ "content": "[{\"id\":\"agent-section\",\"type\":\"header\",\"data\":{\"text\":\"Agent Operations\",\"col\":12}},{\"id\":\"whatsapp-contact\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"WhatsApp Contact\",\"col\":3}},{\"id\":\"whatsapp-agent-queue\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"WhatsApp Agent Queue\",\"col\":3}},{\"id\":\"open-chat\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Open Chat\",\"col\":3}},{\"id\":\"tagging-section\",\"type\":\"header\",\"data\":{\"text\":\"Contact Management\",\"col\":12}},{\"id\":\"contact-tag\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"WhatsApp Contact Tag\",\"col\":3}},{\"id\":\"auto-tag-rule\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"WhatsApp Auto Tag Rule\",\"col\":3}}]",
+ "creation": "2026-01-17 20:30:00.000000",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "users",
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "WhatsApp Agent",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Agent Operations",
+   "link_count": 0,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "WhatsApp Contact",
+   "link_count": 0,
+   "link_to": "WhatsApp Contact",
+   "link_type": "DocType",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "WhatsApp Agent Queue",
+   "link_count": 0,
+   "link_to": "WhatsApp Agent Queue",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "description": "Open live chat interface",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Open Chat",
+   "link_count": 0,
+   "link_to": "/app/chat",
+   "link_type": "Page",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Contact Management",
+   "link_count": 0,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "WhatsApp Contact Tag",
+   "link_count": 0,
+   "link_to": "WhatsApp Contact Tag",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "WhatsApp Auto Tag Rule",
+   "link_count": 0,
+   "link_to": "WhatsApp Auto Tag Rule",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-01-17 20:30:00.000000",
+ "modified_by": "Administrator",
+ "module": "Whatsapp Chat",
+ "name": "WhatsApp Agent",
+ "owner": "Administrator",
+ "parent": null,
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 2,
+ "shortcuts": [
+  {
+   "color": "Blue",
+   "format": "{} Unread",
+   "label": "WhatsApp Contact",
+   "link_to": "WhatsApp Contact",
+   "stats_filter": "{\"is_read\": 0}",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "format": "{} Available",
+   "label": "WhatsApp Agent Queue",
+   "link_to": "WhatsApp Agent Queue",
+   "stats_filter": "{\"status\": \"Available\"}",
+   "type": "DocType"
+  },
+  {
+   "color": "Orange",
+   "icon": "message-square",
+   "label": "Open Chat",
+   "link_to": "/app/chat",
+   "type": "Page"
+  },
+  {
+   "color": "Purple",
+   "label": "WhatsApp Contact Tag",
+   "link_to": "WhatsApp Contact Tag",
+   "type": "DocType"
+  },
+  {
+   "color": "Cyan",
+   "format": "{} Active",
+   "label": "WhatsApp Auto Tag Rule",
+   "link_to": "WhatsApp Auto Tag Rule",
+   "stats_filter": "{\"is_active\": 1}",
+   "type": "DocType"
+  }
+ ],
+ "title": "WhatsApp Agent"
+}
