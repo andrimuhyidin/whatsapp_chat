@@ -708,59 +708,7 @@ export default class ChatSpace {
     return $recipient_element;
   }
 
-  handle_send_message(attachment) {
-    const $type_message = $('.type-message');
-    let content = null;
 
-    if (attachment) {
-      content = attachment;
-    } else {
-      content = $type_message.val();
-    }
-
-    if (content.length === 0) {
-      return;
-    }
-    this.typing = false;
-    if (this.timeout) {
-      clearTimeout(this.timeout);
-    }
-
-    if (
-      this.profile.is_admin === true &&
-      frappe.Chat.settings.user.enable_message_tone === 1
-    ) {
-      frappe.utils.play_sound('chat-message-send');
-    }
-
-    // Pass is_internal_note flag if set
-    const is_internal = this.is_internal_note || false;
-
-    // Optimistic UI update - styling for internal note
-    const msg_element = this.make_message(content, get_time(), 'recipient', this.profile.user);
-    if (is_internal) {
-        msg_element.find('.message-bubble').css({'background': 'var(--yellow-100)', 'color': 'var(--text-color)'});
-        msg_element.find('.message-bubble').prepend(`<strong>[Internal]</strong> `);
-    }
-    this.$chat_space_container.append(msg_element);
-    
-    $type_message.val('');
-    // Reset internal note mode after send? optional. Let's keep it until toggled off or reset it.
-    // Usually convenient to reset.
-    if (is_internal) {
-        $('.internal-note-toggle').click(); // toggle back
-    }
-
-    scroll_to_bottom(this.$chat_space_container);
-    send_message(
-      content,
-      this.profile.user,
-      this.profile.room,
-      this.profile.user_email,
-      attachment,
-      is_internal
-    );
-  }
 
   receive_message(res, time) {
     let chat_type = 'sender';

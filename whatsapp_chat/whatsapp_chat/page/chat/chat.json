@@ -1,0 +1,23 @@
+{
+ "content": null,
+ "creation": "2024-01-25 18:19:50.868390",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2024-02-07 11:19:07.878593",
+ "modified_by": "Administrator",
+ "module": "Whatsapp Chat",
+ "name": "chat",
+ "owner": "Administrator",
+ "page_name": "chat",
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "WhatsApp Agent"
+  }
+ ],
+ "standard": "Yes",
+ "title": "Chat"
+}

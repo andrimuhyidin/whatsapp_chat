@@ -147,6 +147,8 @@ def last_message(doc, method):
     else:
         mobile_no = doc.get("from")
 
+    # Get contact name from mobile number
+    contact_name = frappe.db.get_value("WhatsApp Contact", {"mobile_no": mobile_no}, "name")
 
     if contact_name:
         chat_doc = frappe.get_doc("WhatsApp Contact", contact_name)

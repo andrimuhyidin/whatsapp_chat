@@ -15,15 +15,15 @@ setup = {
     "category": "Integrations"
 }
 
-add_to_apps_screen = [
-    {
-        "name": "whatsapp_chat",
-        "title": "WhatsApp Agent",
-        "icon": "/assets/whatsapp_chat/images/whatsapp-logo.png",
-        "route": "/app/whatsapp-contact",
-        "description": "Manage WhatsApp conversations and contacts"
-    }
-]
+# add_to_apps_screen = [
+#     {
+#         "name": "whatsapp_chat",
+#         "title": "WhatsApp Agent",
+#         "icon": "/assets/whatsapp_chat/images/whatsapp-logo.png",
+#         "route": "/app/whatsapp-contact",
+#         "description": "Manage WhatsApp conversations and contacts"
+#     }
+# ]
 
 from frappe import __version__ as frappe_version
 

@@ -12,6 +12,12 @@ import {
 frappe.provide('frappe.Chat');
 frappe.provide('frappe.Chat.settings');
 
+// Expose components
+frappe.Chat.ChatList = ChatList;
+frappe.Chat.ChatSpace = ChatSpace;
+frappe.Chat.ChatBubble = ChatBubble;
+frappe.Chat.ChatWelcome = ChatWelcome;
+
 /** Spawns a chat widget on any web page */
 frappe.Chat = class {
   constructor() {
