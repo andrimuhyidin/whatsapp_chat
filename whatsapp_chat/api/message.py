@@ -148,11 +148,16 @@ def last_message(doc, method):
         mobile_no = doc.get("from")
 
 
-    contact_name = frappe.db.get_value("WhatsApp Contact", filters={"mobile_no": mobile_no})
     if contact_name:
         chat_doc = frappe.get_doc("WhatsApp Contact", contact_name)
         chat_doc.last_message = doc.message
         chat_doc.is_read = 0
+        
+        # Update dates
+        if not chat_doc.first_message_date:
+            chat_doc.first_message_date = doc.creation
+        chat_doc.last_message_date = doc.creation
+        
         chat_doc.save(ignore_permissions=True)
     else:
         chat_doc = frappe.get_doc({
@@ -160,9 +165,19 @@ def last_message(doc, method):
             "mobile_no": mobile_no,
             "last_message": doc.message,
             "contact_name": mobile_no,
-            "is_read": 0
+            "is_read": 0,
+            "first_message_date": doc.creation,
+            "last_message_date": doc.creation
         })
         chat_doc.save(ignore_permissions=True)
+
+    # Auto Tagging for Incoming Messages
+    if doc.type != 'Outgoing' and doc.message:
+        try:
+            from whatsapp_chat.utils.tagging import auto_tag_by_keyword
+            auto_tag_by_keyword(doc.message, chat_doc.name)
+        except Exception:
+            pass
 
     if chat_doc.email and doc.type != 'Outgoing':
         message_data = {

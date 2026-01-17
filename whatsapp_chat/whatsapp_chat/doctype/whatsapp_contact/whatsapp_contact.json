@@ -13,7 +13,11 @@
   "column_break_agent",
   "assigned_agent",
   "priority",
-  "chat_status"
+  "chat_status",
+  "column_break_tags",
+  "tags",
+  "first_message_date",
+  "last_message_date"
  ],
  "fields": [
   {
@@ -69,6 +73,28 @@
    "fieldtype": "Select",
    "label": "Chat Status",
    "options": "Open\nIn Progress\nWaiting\nResolved\nClosed"
+  },
+  {
+   "fieldname": "column_break_tags",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "tags",
+   "fieldtype": "Table MultiSelect",
+   "label": "Tags",
+   "options": "WhatsApp Contact Tag"
+  },
+  {
+   "fieldname": "first_message_date",
+   "fieldtype": "Datetime",
+   "label": "First Message Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_message_date",
+   "fieldtype": "Datetime",
+   "label": "Last Message Date",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,

@@ -1,0 +1,84 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-01-17 20:10:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "rule_name",
+  "is_active",
+  "column_break_main",
+  "target_tag",
+  "section_break_keywords",
+  "keywords",
+  "match_type"
+ ],
+ "fields": [
+  {
+   "fieldname": "rule_name",
+   "fieldtype": "Data",
+   "label": "Rule Name",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "label": "Is Active",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_main",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "target_tag",
+   "fieldtype": "Link",
+   "label": "Target Tag",
+   "options": "WhatsApp Contact Tag",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "section_break_keywords",
+   "fieldtype": "Section Break",
+   "label": "Matching Keywords"
+  },
+  {
+   "fieldname": "keywords",
+   "fieldtype": "Text",
+   "label": "Keywords (comma separated)",
+   "description": "e.g. price, cost, buy, purchase",
+   "reqd": 1
+  },
+  {
+   "default": "Any",
+   "fieldname": "match_type",
+   "fieldtype": "Select",
+   "label": "Match Type",
+   "options": "Any\nAll",
+   "description": "Any = match if ANY keyword found. All = match only if ALL keywords found."
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-01-17 20:10:00.000000",
+ "modified_by": "Administrator",
+ "module": "Whatsapp Chat",
+ "name": "WhatsApp Auto Tag Rule",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
