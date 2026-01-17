@@ -52,9 +52,59 @@ export default class ChatSpace {
 					</div>
 					<div class='chat-profile-status'>${__('Typing...')}</div>
 				</div>
+                <div class="chat-header-actions" style="margin-left: auto; display: flex; gap: 10px;">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
+                            Actions
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="#" onclick="cur_dialog.chat_space.create_lead()">Create Lead</a>
+                            <a class="dropdown-item" href="#" onclick="cur_dialog.chat_space.create_issue()">Create Issue (Ticket)</a>
+                        </div>
+                    </div>
+                </div>
 			</div>
 		`;
     this.$chat_space.append(header_html);
+  }
+
+  create_lead() {
+      const me = this;
+      frappe.confirm('Create a CRM Lead from this chat?', () => {
+          frappe.call({
+              method: 'whatsapp_chat.api.integrations.create_lead_from_chat',
+              args: {
+                  mobile_no: me.profile.user_email, // In WA chat, user_email is the phone number
+                  contact_name: me.profile.room_name
+                  // chat_history: passed automatically if needed or fetch from current context
+              },
+              callback: function(r) {
+                  if(!r.exc) {
+                      frappe.show_alert({message: __('Lead Created: ' + r.message.name), indicator: 'green'});
+                  }
+              }
+          });
+      });
+  }
+
+  create_issue() {
+      const me = this;
+      frappe.prompt([
+          {label: 'Issue Description', fieldname: 'description', fieldtype: 'Small Text', reqd: 1}
+      ], (values) => {
+          frappe.call({
+              method: 'whatsapp_chat.api.integrations.create_issue_from_chat',
+              args: {
+                  mobile_no: me.profile.user_email,
+                  description: values.description
+              },
+              callback: function(r) {
+                  if(!r.exc) {
+                    frappe.show_alert({message: __('Issue Created: ' + r.message.name), indicator: 'green'});
+                  }
+              }
+          });
+      }, 'Create Support Ticket', 'Create');
   }
 
   async fetch_and_setup_messages() {
