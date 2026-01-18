@@ -53,7 +53,7 @@
    "is_query_report": 0,
    "label": "Open Chat",
    "link_count": 0,
-   "link_to": "/app/chat",
+   "link_to": "chat",
    "link_type": "Page",
    "onboard": 0,
    "type": "Link"
@@ -118,7 +118,7 @@
    "color": "Orange",
    "icon": "message-square",
    "label": "Open Chat",
-   "link_to": "/app/chat",
+   "link_to": "chat",
    "type": "Page"
   },
   {
