@@ -51,6 +51,22 @@ frappe.pages['chat'].on_page_load = function(wrapper) {
                      return;
                 }
 
+                if (!settings.has_account) {
+                    $container.html(`
+                        <div class="chat-empty-state" style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+                            <img src="/assets/frappe_whatsapp/images/whatsapp-logo.png" style="width: 80px; margin-bottom: 20px; filter: grayscale(100%); opacity: 0.6;">
+                            <h3 style="font-weight: 600; color: var(--text-color);">Setup Required</h3>
+                            <p style="color: var(--text-muted); max-width: 400px; margin: 10px 0 20px;">
+                                No WhatsApp Account found. Please configure your WhatsApp Business Account to start messaging.
+                            </p>
+                            <button class="btn btn-primary btn-sm" onclick="frappe.set_route('List', 'WhatsApp Account')">
+                                ${frappe.utils.icon('plus', 'xs')} Configure Now
+                            </button>
+                        </div>
+                    `);
+                    return;
+                }
+
                 if (frappe.Chat && frappe.Chat.ChatList) {
                     // Initialize ChatList in our container
                     const chat_list = new frappe.Chat.ChatList({

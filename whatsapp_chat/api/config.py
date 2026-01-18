@@ -14,6 +14,7 @@ def settings(token):
         'user_email': frappe.session.user,
         'is_admin': frappe.session.user != 'Guest' and frappe.session.data.get('user_type') == 'System User',
         'guest_title': ''.join(frappe.get_hooks('guest_title')),
+        'has_account': frappe.db.count('WhatsApp Account') > 0
     }
 
     config = {**config, **get_chat_settings()}
