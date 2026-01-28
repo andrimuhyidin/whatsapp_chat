@@ -7,7 +7,7 @@ Chat export handler for WhatsApp Chat.
 
 import frappe
 from frappe import _
-from frappe.utils import getdate, get_datetime, format_datetime, nowdatetime
+from frappe.utils import getdate, get_datetime, format_datetime, now_datetime
 from typing import List, Dict, Any, Optional
 import json
 import csv
@@ -197,7 +197,7 @@ class ChatExporter:
 				"email": self.contact.email
 			},
 			"export_info": {
-				"exported_at": str(nowdatetime()),
+				"exported_at": str(now_datetime()),
 				"exported_by": frappe.session.user,
 				"date_from": str(self.date_from) if self.date_from else None,
 				"date_to": str(self.date_to) if self.date_to else None,
@@ -386,7 +386,7 @@ class ChatExporter:
 			
 			<div class="footer">
 				<strong>Export Information</strong><br>
-				Exported on: {format_datetime(nowdatetime(), "dd MMMM yyyy HH:mm")}<br>
+				Exported on: {format_datetime(now_datetime(), "dd MMMM yyyy HH:mm")}<br>
 				Exported by: {frappe.session.user}<br>
 				Period: {format_datetime(self.date_from, "dd MMM yyyy") if self.date_from else 'All time'} 
 				- {format_datetime(self.date_to, "dd MMM yyyy") if self.date_to else 'Present'}

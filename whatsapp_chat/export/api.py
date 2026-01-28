@@ -7,7 +7,7 @@ API endpoints for chat export functionality.
 
 import frappe
 from frappe import _
-from frappe.utils import nowdatetime
+from frappe.utils import now_datetime
 from whatsapp_chat.export.handler import ChatExporter
 
 
@@ -48,7 +48,7 @@ def export_chat(
 	contact = frappe.get_doc("WhatsApp Contact", contact_name)
 	contact_identifier = contact.contact_name or contact.mobile_no
 	safe_name = "".join(c for c in contact_identifier if c.isalnum() or c in " -_")[:30]
-	timestamp = nowdatetime().strftime("%Y%m%d_%H%M")
+	timestamp = now_datetime().strftime("%Y%m%d_%H%M")
 	
 	# Generate export
 	if format == "pdf":
@@ -149,7 +149,7 @@ def export_multiple_chats(
 	
 	zip_buffer.seek(0)
 	
-	timestamp = nowdatetime().strftime("%Y%m%d_%H%M")
+	timestamp = now_datetime().strftime("%Y%m%d_%H%M")
 	filename = f"chat_transcripts_{timestamp}.zip"
 	
 	frappe.local.response.filename = filename
@@ -228,7 +228,7 @@ def email_chat_transcript(
 		<p>This transcript was exported on {1} by {2}.</p>
 		""").format(
 			contact.contact_name or contact.mobile_no,
-			nowdatetime().strftime("%d %B %Y %H:%M"),
+			now_datetime().strftime("%d %B %Y %H:%M"),
 			frappe.session.user
 		)
 	

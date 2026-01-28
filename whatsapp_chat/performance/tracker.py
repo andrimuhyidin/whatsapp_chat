@@ -7,7 +7,7 @@ Performance tracking functions for WhatsApp Chat agents.
 
 import frappe
 from frappe import _
-from frappe.utils import nowdatetime, getdate, time_diff_in_seconds, today
+from frappe.utils import now_datetime, getdate, time_diff_in_seconds, today
 from typing import Optional
 import json
 
@@ -25,7 +25,7 @@ def log_chat_assigned(contact_name: str, agent: str):
 		cache_key = f"chat_assigned:{contact_name}"
 		frappe.cache.set(cache_key, {
 			"agent": agent,
-			"assigned_at": str(nowdatetime())
+			"assigned_at": str(now_datetime())
 		}, expires_in_sec=86400 * 7)  # Keep for 7 days
 		
 	except Exception as e:
@@ -48,14 +48,14 @@ def log_first_response(contact_name: str, agent: str):
 			return
 		
 		assigned_at = frappe.utils.get_datetime(assignment_data.get("assigned_at"))
-		response_time = time_diff_in_seconds(nowdatetime(), assigned_at)
+		response_time = time_diff_in_seconds(now_datetime(), assigned_at)
 		
 		# Store first response time
 		response_key = f"first_response:{contact_name}"
 		frappe.cache.set(response_key, {
 			"agent": agent,
 			"response_time_seconds": response_time,
-			"responded_at": str(nowdatetime())
+			"responded_at": str(now_datetime())
 		}, expires_in_sec=86400 * 7)
 		
 		# Update daily metrics
@@ -79,7 +79,7 @@ def log_chat_resolved(contact_name: str, agent: str):
 		
 		if assignment_data:
 			assigned_at = frappe.utils.get_datetime(assignment_data.get("assigned_at"))
-			resolution_time = time_diff_in_seconds(nowdatetime(), assigned_at)
+			resolution_time = time_diff_in_seconds(now_datetime(), assigned_at)
 			
 			# Update daily metrics
 			_update_agent_metric(agent, "resolution_times", resolution_time)
