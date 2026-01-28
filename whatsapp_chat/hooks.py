@@ -7,6 +7,12 @@ app_description = "Chat app for whatsapp"
 app_email = "shridharpatil2792@gmail.com"
 app_license = "unlicense"
 
+# Required Apps - frappe_whatsapp is the base WhatsApp integration
+required_apps = ["frappe_whatsapp"]
+
+# Optional dependencies (checked at runtime)
+optional_apps = ["erpnext"]  # For Customer/Supplier/Lead integration
+
 # Module Setup
 # ------------
 setup = {

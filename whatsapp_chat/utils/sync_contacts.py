@@ -1,5 +1,18 @@
 import frappe
-from frappe_whatsapp.utils import format_number
+
+# Defensive import for frappe_whatsapp dependency
+try:
+    from frappe_whatsapp.utils import format_number
+except ImportError:
+    def format_number(number):
+        """Fallback if frappe_whatsapp not installed."""
+        if not number:
+            return None
+        # Basic formatting - remove spaces and ensure + prefix
+        number = str(number).strip().replace(" ", "").replace("-", "")
+        if not number.startswith("+"):
+            number = "+" + number
+        return number
 
 def sync_entity_to_whatsapp_contact(doc, method=None):
     """

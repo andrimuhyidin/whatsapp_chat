@@ -1,5 +1,16 @@
 import frappe
-from frappe_whatsapp.integrations.core import is_app_installed, has_doctype
+
+# Defensive imports for frappe_whatsapp dependency
+try:
+    from frappe_whatsapp.integrations.core import is_app_installed, has_doctype
+except ImportError:
+    def is_app_installed(app_name):
+        """Fallback if frappe_whatsapp not installed."""
+        return app_name in frappe.get_installed_apps()
+    
+    def has_doctype(doctype):
+        """Fallback if frappe_whatsapp not installed."""
+        return frappe.db.exists("DocType", doctype)
 
 @frappe.whitelist()
 def create_lead_from_chat(mobile_no, contact_name, chat_history=None):
