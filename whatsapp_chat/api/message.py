@@ -110,35 +110,75 @@ def send_whatsapp_read_receipts(room):
 
 @frappe.whitelist()
 def send(content, user, room, user_no, attachment=None):
-    content_type = "text"
-    if attachment:
-        file_type = mimetypes.guess_type(content)[0]
-        if file_type in ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg","image/webp"]:
-            content_type = 'image'
-        elif file_type in ["application/pdf", "application/vnd.ms-powerpoint", "application/msword", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.openxmlformats-officedocument.presentationml.presentation", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"]:
-            content_type = "document"
-        elif file_type in ["audio/aac", "audio/mp4", "audio/mpeg", "audio/amr", "audio/ogg"]:
-            content_type = 'audio'
-        elif file_type in ["video/mp4", "video/3gp"]:
-            content_type = "video"
+    """Send a WhatsApp message to a user.
+    
+    Args:
+        content: Message content or file path
+        user: Sender user
+        room: Chat room identifier
+        user_no: Recipient phone number
+        attachment: Optional attachment indicator
+        
+    Returns:
+        "ok" on success, error dict on failure
+    """
+    from frappe import _
+    
+    if not content:
+        return {"error": _("Message content is required")}
+    
+    if not user_no:
+        return {"error": _("Recipient phone number is required")}
+    
+    try:
+        content_type = "text"
+        if attachment:
+            file_type = mimetypes.guess_type(content)[0]
+            if file_type in ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg","image/webp"]:
+                content_type = 'image'
+            elif file_type in ["application/pdf", "application/vnd.ms-powerpoint", "application/msword", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.openxmlformats-officedocument.presentationml.presentation", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"]:
+                content_type = "document"
+            elif file_type in ["audio/aac", "audio/mp4", "audio/mpeg", "audio/amr", "audio/ogg"]:
+                content_type = 'audio'
+            elif file_type in ["video/mp4", "video/3gp"]:
+                content_type = "video"
 
-        frappe.get_doc({
-            "doctype": "WhatsApp Message",
-            "to": user_no,
-            "type": "Outgoing",
-            "attach": content,
-            "content_type": content_type
-        }).save()
-    else:
-        frappe.get_doc({
-            "doctype": "WhatsApp Message",
-            "to": user_no,
-            "type": "Outgoing",
-            "message": content,
-            "content_type": content_type
-        }).save()
+            frappe.get_doc({
+                "doctype": "WhatsApp Message",
+                "to": user_no,
+                "type": "Outgoing",
+                "attach": content,
+                "content_type": content_type
+            }).save()
+        else:
+            frappe.get_doc({
+                "doctype": "WhatsApp Message",
+                "to": user_no,
+                "type": "Outgoing",
+                "message": content,
+                "content_type": content_type
+            }).save()
 
-    return "ok"
+        return "ok"
+    
+    except frappe.ValidationError as e:
+        frappe.log_error(
+            f"WhatsApp send validation error to {user_no}: {str(e)}",
+            "WhatsApp Chat Send Error"
+        )
+        return {"error": str(e)}
+    except frappe.PermissionError as e:
+        frappe.log_error(
+            f"WhatsApp send permission error: {str(e)}",
+            "WhatsApp Chat Send Error"
+        )
+        return {"error": _("You do not have permission to send messages")}
+    except Exception as e:
+        frappe.log_error(
+            f"WhatsApp send error to {user_no}: {str(e)}",
+            "WhatsApp Chat Send Error"
+        )
+        return {"error": _("Failed to send message. Please try again.")}
 
 
 def last_message(doc, method):
