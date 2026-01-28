@@ -3,6 +3,13 @@ from frappe.model.document import Document
 
 
 class WhatsAppAgentQueue(Document):
+    """
+    WhatsApp Agent Queue for workload management.
+    
+    Manages agent availability, capacity, and automatic chat
+    assignment with load balancing for customer support.
+    """
+
     def validate(self):
         if self.current_load < 0:
             self.current_load = 0

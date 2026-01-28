@@ -6,6 +6,12 @@ from frappe.model.document import Document
 
 
 class WhatsAppContact(Document):
+	"""
+	WhatsApp Contact for customer conversation management.
+	
+	Stores contact information with conversation status, priority,
+	agent assignment, and message history for agent dashboard.
+	"""
 
 	def after_insert(self):
 		if self.email:
