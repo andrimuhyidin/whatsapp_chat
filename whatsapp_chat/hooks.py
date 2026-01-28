@@ -106,3 +106,10 @@ sounds = [
     {'name': 'chat-message-send', 'src': '/assets/frappe/sounds/submit.mp3', 'volume': 0.2},
     {'name': 'chat-message-receive', 'src': '/assets/frappe/sounds/alert.mp3', 'volume': 0.5}
 ]
+
+# Scheduled Tasks
+scheduler_events = {
+    "daily": [
+        "whatsapp_chat.performance.tracker.aggregate_daily_metrics"
+    ]
+}

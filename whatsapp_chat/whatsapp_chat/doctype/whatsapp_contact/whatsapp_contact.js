@@ -14,6 +14,60 @@ frappe.ui.form.on("WhatsApp Contact", {
                 }
             });
 
+            // --- Export Actions ---
+            frm.add_custom_button(__("Export PDF"), () => {
+                window.open(`/api/method/whatsapp_chat.export.api.export_chat?contact_name=${frm.doc.name}&format=pdf`);
+            }, __("Export"));
+
+            frm.add_custom_button(__("Export CSV"), () => {
+                window.open(`/api/method/whatsapp_chat.export.api.export_chat?contact_name=${frm.doc.name}&format=csv`);
+            }, __("Export"));
+
+            frm.add_custom_button(__("Export JSON"), () => {
+                window.open(`/api/method/whatsapp_chat.export.api.export_chat?contact_name=${frm.doc.name}&format=json`);
+            }, __("Export"));
+
+            frm.add_custom_button(__("Email Transcript"), () => {
+                frappe.prompt([
+                    {
+                        label: __("Recipients"),
+                        fieldname: "recipients",
+                        fieldtype: "Data",
+                        reqd: 1,
+                        description: __("Comma-separated email addresses")
+                    },
+                    {
+                        label: __("Subject"),
+                        fieldname: "subject",
+                        fieldtype: "Data"
+                    },
+                    {
+                        label: __("Format"),
+                        fieldname: "format",
+                        fieldtype: "Select",
+                        options: "PDF\nCSV",
+                        default: "PDF"
+                    }
+                ], (values) => {
+                    frappe.call({
+                        method: "whatsapp_chat.export.api.email_chat_transcript",
+                        args: {
+                            contact_name: frm.doc.name,
+                            recipients: values.recipients,
+                            subject: values.subject,
+                            format: values.format.toLowerCase()
+                        },
+                        freeze: true,
+                        freeze_message: __("Sending..."),
+                        callback: function(r) {
+                            if (!r.exc) {
+                                frappe.show_alert({message: __("Email sent successfully"), indicator: "green"});
+                            }
+                        }
+                    });
+                }, __("Email Chat Transcript"), __("Send"));
+            }, __("Export"));
+
             // --- Agent Assignment Actions ---
             if (!frm.doc.assigned_agent) {
                 frm.add_custom_button(__("Assign to Me"), () => {
